@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ONE BULLET — Indie Roguelike</title>
+  <meta name="description" content="ONE BULLET is a fast-paced top-down action roguelike set in a radioactive post-apocalyptic Chernobyl. You only get one bullet." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Headline + readable body fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+  <!-- CRT / scanline overlays -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <!-- Top nav -->
+  <header class="nav-wrap">
+    <nav class="nav">
+      <a class="brand" href="#top" aria-label="ONE BULLET home">
+        <span class="brand-dot"></span>
+        <span><b></b>ONE BULLET</b></span>
+      </a>
+
+      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="nav-links">
+        <a href="#mechanic">Mechanic</a>
+        <a href="#features">Features</a>
+        <a href="#enemies">Enemies</a>
+        <a href="#world">World</a>
+        <a href="#modes">Modes</a>
+      </div>
+
+      <div class="nav-cta">
+        <a class="btn btn-ghost" href="#wishlist">Wishlist</a>
+        <a class="btn btn-primary" href="#trailer">Watch Trailer</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <main id="top">
+    <section class="hero">
+      <div class="hero-bg" aria-hidden="true">
+        <!-- pixel-ish arena grid + radioactive bloom -->
+        <div class="hero-grid"></div>
+        <div class="hero-bloom"></div>
+        <div class="hero-parallax" data-parallax="0.18"></div>
+      </div>
+
+      <div class="container hero-inner">
+        <div class="hero-copy">
+          <p class="kicker">
+            TOP-DOWN ACTION ROGUELIKE // CHERNOBYL AFTERGLOW
+          </p>
+
+          <h1 class="title">
+            <span class="title-glow">ONE</span> <span class="title-stroke">BULLET</span>
+          </h1>
+
+          <p class="tagline">
+            <span class="tagline-strong">You miss, you die.</span>
+            <span class="tagline-sub">One shot. No mercy.</span>
+          </p>
+
+          <p class="hero-desc">
+            Fast movement. Brutal waves. A single glowing round that turns you into a predator
+            until you fire it. Then you’re naked in the ruins.
+            <span class="accent">Recall it. Retrieve it. Chain kills.</span>
+          </p>
+
+          <div class="hero-actions" id="trailer">
+            <a class="btn btn-primary btn-large" href="#wishlist">
+              Wishlist
+              <span class="btn-spark" aria-hidden="true"></span>
+            </a>
+            <button class="btn btn-ghost btn-large" id="watchTrailerBtn" type="button">
+              Watch Trailer
+            </button>
+          </div>
+
+          <div class="hero-stats">
+            <div class="stat">
+              <div class="stat-num">01</div>
+              <div class="stat-label">Bullet</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">∞</div>
+              <div class="stat-label">Ways to Die</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">⚡</div>
+              <div class="stat-label">Speed & Skill</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <!-- Stylized “bullet card” mock UI -->
+          <div class="card card-hero">
+            <div class="card-top">
+              <span class="chip chip-green">RAD ZONE</span>
+              <span class="chip chip-blue">ROGUELIKE</span>
+              <span class="chip chip-orange">ARCADE</span>
+            </div>
+
+            <div class="arena">
+              <div class="arena-label">ARENA FEED</div>
+              <div class="arena-screen">
+                <div class="arena-sprite enemy e1"></div>
+                <div class="arena-sprite enemy e2"></div>
+                <div class="arena-sprite enemy e3"></div>
+                <div class="arena-sprite bullet"></div>
+                <div class="arena-sprite streak"></div>
+                <div class="arena-sprite player"></div>
+              </div>
+
+              <div class="arena-footer">
+                <div class="meter">
+                  <span class="meter-label">VULNERABLE</span>
+                  <span class="meter-bar"><i></i></span>
+                </div>
+                <div class="hint">FIRE → RECALL → CHAIN</div>
+              </div>
+            </div>
+
+            <div class="card-bottom">
+              <div class="pill">Dash</div>
+              <div class="pill">Pierce</div>
+              <div class="pill">Recall</div>
+              <div class="pill">Punishing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- subtle scroll hint -->
+      <a class="scroll-indicator" href="#mechanic" aria-label="Scroll to mechanic section">
+        <span></span>
+      </a>
+    </section>
+
+    <!-- Core Mechanic -->
+    <section class="section" id="mechanic">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="h2 glitch" data-text="You Only Get One">You Only Get One</h2>
+          <p class="lead">
+            ONE BULLET is built around a single, recallable shot. When the bullet leaves your chamber,
+            <span class="accent">you’re completely vulnerable</span>. The only way back to safety is skill:
+            movement, timing, and retrieving what you fired.
+          </p>
+        </div>
+
+        <div class="mechanic-grid">
+          <div class="card card-step">
+            <div class="icon icon-orange">▶</div>
+            <h3>Fire</h3>
+            <p>Commit. The bullet launches with a neon streak. Miss and you’ve just signed the contract.</p>
+          </div>
+
+          <div class="card card-step">
+            <div class="icon icon-green">!</div>
+            <h3>Vulnerable</h3>
+            <p>No ammo. No mercy. Dodge, dash, and reposition while enemies close in.</p>
+          </div>
+
+          <div class="card card-step">
+            <div class="icon icon-blue">↩</div>
+            <h3>Recall</h3>
+            <p>Call it back through the crowd. A returning round is a blade line up kills.</p>
+          </div>
+
+          <div class="card card-step">
+            <div class="icon icon-green">✦</div>
+            <h3>Chain Kills</h3>
+            <p>Flow state: pierce, retrieve, and fire again. The arena rewards speed and precision.</p>
+          </div>
+        </div>
+
+        <div class="diagram card">
+          <div class="diagram-row">
+            <div class="diagram-node">
+              <div class="node-title">FIRE</div>
+              <div class="node-sub">Shot leaves chamber</div>
+            </div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-node danger">
+              <div class="node-title">VULNERABLE</div>
+              <div class="node-sub">No bullet, no safety</div>
+            </div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-node">
+              <div class="node-title">RECALL</div>
+              <div class="node-sub">Return through enemies</div>
+            </div>
+            <div class="diagram-arrow"></div>
+            <div class="diagram-node good">
+              <div class="node-title">CHAIN</div>
+              <div class="node-sub">Positioning + timing</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gameplay Features -->
+    <section class="section section-alt" id="features">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="h2">Gameplay Features</h2>
+          <p class="lead">Pure movement, ruthless pressure, and a bullet that turns geometry into a weapon.</p>
+        </div>
+
+        <div class="feature-grid">
+          <div class="card feature">
+            <div class="feature-top">
+              <span class="feature-icon">⚡</span>
+              <h3>Dash First Combat</h3>
+            </div>
+            <p>Fast movement and tight arenas. You survive by reading patterns and choosing angles.</p>
+          </div>
+
+          <div class="card feature">
+            <div class="feature-top">
+              <span class="feature-icon">◎</span>
+              <h3>Recallable Piercing Bullet</h3>
+            </div>
+            <p>One round, infinite lines. Fire, recall, and slice through squads on the return path.</p>
+          </div>
+
+          <div class="card feature">
+            <div class="feature-top">
+              <span class="feature-icon">⟡</span>
+              <h3>Skill-Based Timing</h3>
+            </div>
+            <p>Every shot is a risk. Every dodge is a decision. Your mistakes are immediate.</p>
+          </div>
+
+          <div class="card feature">
+            <div class="feature-top">
+              <span class="feature-icon">☢</span>
+              <h3>Waves + Brutal Bosses</h3>
+            </div>
+            <p>Swarming mutations, shielded brutes, and bosses that feel like radiation made flesh.</p>
+          </div>
+
+          <div class="card feature">
+            <div class="feature-top">
+              <span class="feature-icon">⬣</span>
+              <h3>Roguelike Upgrades</h3>
+            </div>
+            <p>Unlock bullets, mods, and cursed tech. Build runs around recall paths and momentum.</p>
+          </div>
+
+          <div class="card feature">
+            <div class="feature-top">
+              <span class="feature-icon">✷</span>
+              <h3>Arcade Energy</h3>
+            </div>
+            <p>Short sessions, high intensity. Chase clean chains and perfect clears.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enemies & Bosses -->
+    <section class="section" id="enemies">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="h2">Enemies & Bosses</h2>
+          <p class="lead">
+            Mutated squads with distinct roles. If you hesitate, they flood your angles.
+          </p>
+        </div>
+
+        <div class="enemy-grid">
+          <div class="card enemy-card">
+            <div class="enemy-type">
+              <span class="enemy-badge green">CHARGER</span>
+              <span class="enemy-sub">Closes distance fast</span>
+            </div>
+            <p>Forces movement. Punishes tunnel vision. Best answered with a clean recall line.</p>
+          </div>
+
+          <div class="card enemy-card">
+            <div class="enemy-type">
+              <span class="enemy-badge blue">SHOOTER</span>
+              <span class="enemy-sub">Suppresses lanes</span>
+            </div>
+            <p>Turns safe paths into death. Break sightlines or pierce the backline on return.</p>
+          </div>
+
+          <div class="card enemy-card">
+            <div class="enemy-type">
+              <span class="enemy-badge orange">SHIELDED</span>
+              <span class="enemy-sub">Frontline wall</span>
+            </div>
+            <p>Blocks direct shots. Position for the recall angle hit from behind or through gaps.</p>
+          </div>
+
+          <div class="card enemy-card">
+            <div class="enemy-type">
+              <span class="enemy-badge green">SPLITTER</span>
+              <span class="enemy-sub">Multiplies pressure</span>
+            </div>
+            <p>Ignore it and the arena fills. Kill timing matters: chain it before it becomes a swarm.</p>
+          </div>
+        </div>
+
+        <div class="boss card">
+          <div class="boss-left">
+            <h3 class="boss-title">Bosses are grotesque, mutated, and unfair.</h3>
+            <p class="boss-desc">
+              Each boss warps the arena: toxic zones, collapsing cover, projectile storms, and sudden charges.
+              Your only advantage is perfect spacing and a bullet that obeys <span class="accent">your timing</span>.
+            </p>
+            <ul class="boss-list">
+              <li>Phase shifts that punish predictable movement</li>
+              <li>Weak points that only open on recall passes</li>
+              <li>Radiation hazards that shrink safe space</li>
+            </ul>
+          </div>
+          <div class="boss-right" aria-hidden="true">
+            <div class="boss-silhouette"></div>
+            <div class="boss-glow"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- World & Story -->
+    <section class="section section-alt" id="world">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="h2">World & Story</h2>
+          <p class="lead">
+            Chernobyl after a catastrophic experiment. Reality bends. The zone learns your name.
+          </p>
+        </div>
+
+        <div class="world-grid">
+          <div class="card world-card">
+            <h3>Post-Apocalyptic Chernobyl</h3>
+            <p>
+              Concrete bunkers, flooded tunnels, exposed reactors, and neon radiation bleeding into the air.
+            </p>
+          </div>
+
+          <div class="card world-card">
+            <h3>Twisted Life, Twisted Physics</h3>
+            <p>
+              Radiation reshapes people, animals, and the rules of matter itself. Your bullet is the only constant.
+            </p>
+          </div>
+
+          <div class="card world-card">
+            <h3>Last Survivor</h3>
+            <p>
+              Your squad is gone. Your gear is gone. All you have left is a weapon with one round and the will to recall it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Game Modes -->
+    <section class="section" id="modes">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="h2">Game Modes</h2>
+          <p class="lead">Run it for story. Grind it for mastery. Prove it daily.</p>
+        </div>
+
+        <div class="mode-grid">
+          <div class="card mode">
+            <h3>Story Runs</h3>
+            <p>Progress through the zone, unlock upgrades, and uncover what the experiment woke up.</p>
+          </div>
+          <div class="card mode">
+            <h3>Endless Survival</h3>
+            <p>Waves escalate until the arena becomes a mistake simulator. How long can you keep the chain?</p>
+          </div>
+          <div class="card mode">
+            <h3>Boss Rush</h3>
+            <p>Back-to-back monstrosities. Learn patterns, exploit recall windows, and stay alive.</p>
+          </div>
+          <div class="card mode">
+            <h3>Daily Seeds</h3>
+            <p>Same upgrades, same enemies, same map global bragging rights. Skill only.</p>
+          </div>
+        </div>
+
+        <!-- CTA strip -->
+        <div class="cta card" id="wishlist">
+          <div class="cta-copy">
+            <h3>Ready to step into the zone?</h3>
+            <p>Wishlist ONE BULLET and get notified when the radiation drops.</p>
+          </div>
+          <div class="cta-actions">
+            <a class="btn btn-primary" href="#" onclick="return false;">Wishlist</a>
+            <a class="btn btn-ghost" href="#" onclick="return false;">Press Kit</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div class="footer-left">
+  <div class="brand footer-brand">
+    <span class="brand-dot"></span>
+    <span><b>ONE BULLET</b></span>
+  </div>
+
+  <p class="studio-name">A game by Zero Margin Studio</p>
+<p class="footer-note">Made with love and radiation ☢</p>
+<p class="footer-credits">
+  Developer: <span>Theo Black</span> · Artist: <span>Baillie Thompson</span>
+</p>
+<p class="footer-contact">
+  Contact us at
+  <a href="mailto:zero.marginstudio@gmail.com">
+    zero.marginstudio@gmail.com
+  </a>
+</p>
+
+</div>
+
+
+        <div class="footer-right">
+          <div class="social">
+            <a href="#" onclick="return false;">X</a>
+            <a href="https://www.youtube.com/channel/UC9ZkKt5Sx-F1M1rzRlwOhHA" target="_blank" rel="noopener">
+  YouTube
+</a>
+
+            <a href="https://discord.gg/a8eWyQMb" target="_blank" rel="noopener">
+  Discord
+</a>
+
+            <a href="#" onclick="return false;">Steam</a>
+          </div>
+          <p class="tiny">© <span id="year"></span> zero margin studio. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Trailer modal -->
+    <div class="modal" id="trailerModal" aria-hidden="true" role="dialog" aria-label="Trailer modal">
+      <div class="modal-backdrop" data-close="true"></div>
+      <div class="modal-panel" role="document">
+        <button class="modal-close" type="button" aria-label="Close trailer" data-close="true">×</button>
+        <div class="modal-head">
+          <div class="modal-title">ONE BULLET  Trailer</div>
+          <div class="modal-sub">.</div>
+        </div>
+        <div class="video">
+          <!-- placeholder -->
+          <div class="video-placeholder">
+            <div class="video-play">▶</div>
+            <div class="video-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
