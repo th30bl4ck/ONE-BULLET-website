@@ -114,25 +114,22 @@
               <span class="chip chip-orange">ARCADE</span>
             </div>
 
-            <div class="arena">
-              <div class="arena-label">ARENA FEED</div>
-              <div class="arena-screen">
-                <div class="arena-sprite enemy e1"></div>
-                <div class="arena-sprite enemy e2"></div>
-                <div class="arena-sprite enemy e3"></div>
-                <div class="arena-sprite bullet"></div>
-                <div class="arena-sprite streak"></div>
-                <div class="arena-sprite player"></div>
-              </div>
+     <div class="arena">
+  <div class="arena-label">ARENA FEED</div>
 
-              <div class="arena-footer">
-                <div class="meter">
-                  <span class="meter-label">VULNERABLE</span>
-                  <span class="meter-bar"><i></i></span>
-                </div>
-                <div class="hint">FIRE → RECALL → CHAIN</div>
-              </div>
-            </div>
+  <div class="arena-screen">
+    <img class="arena-image" src="arena.png" alt="Arena gameplay">
+  </div>
+
+  <div class="arena-footer">
+    <div class="meter">
+      <span class="meter-label">VULNERABLE</span>
+      <span class="meter-bar"><i></i></span>
+    </div>
+    <div class="hint">FIRE → RECALL → CHAIN</div>
+  </div>
+</div>
+
 
             <div class="card-bottom">
               <div class="pill">Dash</div>
@@ -477,6 +474,6 @@
     </div>
   </main>
 
-  <script src="{{ url_for('static', filename='main.js') }}"></script>
+ 
 </body>
 </html>

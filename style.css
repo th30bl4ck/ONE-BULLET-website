@@ -362,6 +362,33 @@ a{ color:inherit; text-decoration:none; }
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
 .arena-screen{
+ .arena-screen{
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  background: #0b0f0e; /* fallback while loading */
+}
+
+/* keep your grid overlay working */
+.arena-screen::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(to bottom, rgba(255,255,255,.04) 1px, transparent 1px) 0 0 / 18px 18px;
+  opacity:.25;
+  mix-blend-mode: overlay;
+  pointer-events:none;
+}
+
+.arena-image{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* fills the frame nicely */
+  display: block;      /* removes inline gaps */
+}
+
   position:relative;
   aspect-ratio: 16/10;
   background:
