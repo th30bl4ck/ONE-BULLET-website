@@ -152,7 +152,6 @@ a{ color:inherit; text-decoration:none; }
   line-height: 1;
 }
 
-}
 .btn:hover{ transform: translateY(-1px); border-color: rgba(56,255,122,.35); }
 .btn:active{ transform: translateY(0px); }
 
