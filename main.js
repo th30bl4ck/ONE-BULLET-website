@@ -1,9 +1,7 @@
 (() => {
-  // Footer year
   const yearEl = document.getElementById("year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  // Parallax (subtle) on hero background
   const parallaxEls = Array.from(document.querySelectorAll("[data-parallax]"));
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -18,7 +16,6 @@
   }
   window.addEventListener("mousemove", onMove);
 
-  // Mobile nav
   const toggle = document.querySelector(".nav-toggle");
   if (toggle) {
     toggle.addEventListener("click", () => {
@@ -26,7 +23,6 @@
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
 
-    // Close menu when clicking a link
     document.querySelectorAll(".nav-links a").forEach(a => {
       a.addEventListener("click", () => {
         document.body.classList.remove("menu-open");
@@ -35,7 +31,6 @@
     });
   }
 
-  // Trailer modal
   const modal = document.getElementById("trailerModal");
   const watchBtn = document.getElementById("watchTrailerBtn");
 
@@ -67,7 +62,6 @@
     });
   }
 
-  // Smooth anchor offset (for sticky nav)
   const nav = document.querySelector(".nav-wrap");
   const navHeight = nav ? nav.offsetHeight : 64;
 

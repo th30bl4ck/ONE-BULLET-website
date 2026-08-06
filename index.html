@@ -4,877 +4,475 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ONE BULLET</title>
-  <meta name="description" content="ONE BULLET is a brutal top-down action roguelike where one shot decides everything." />
+  <meta name="description" content="ONE BULLET is a tough top-down action roguelike. You have one gun and exactly one bullet. Make it count." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #050505;
-      --bg-soft: #0b0b0c;
-      --panel: #101011;
-      --panel-2: #141416;
-      --line: rgba(255,255,255,0.08);
-      --line-strong: rgba(255,255,255,0.14);
-      --text: #f4f4f4;
-      --muted: #9a9a9f;
+      --bg: #030303;
+      --text: #e2e2e2;
+      --muted: #88888f;
       --red: #ff2b2b;
-      --red-dark: #7d1111;
-      --shadow: 0 24px 70px rgba(0,0,0,0.45);
-      --radius: 22px;
-      --container: min(1120px, calc(100% - 32px));
+      --line: rgba(255, 255, 255, 0.1);
+      --container: min(1200px, calc(100% - 40px));
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+    
     body {
       margin: 0;
       font-family: "Inter", system-ui, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(900px 400px at 50% -10%, rgba(255,43,43,0.09), transparent 60%),
-        linear-gradient(180deg, #030303 0%, #070707 35%, #050505 100%);
+      
+      /* Background setup */
+      background: var(--bg) url('static/spr_main_menu_backround.png') center/cover fixed no-repeat;
+      
+      /* Forces the browser to keep pixel art sharp instead of blurring it */
+      image-rendering: pixelated; 
+      
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.015), transparent 25%, transparent 75%, rgba(255,255,255,0.01));
-      z-index: 1;
+    /* Typography */
+    h1, h2, h3, .orbitron {
+      font-family: "Orbitron", sans-serif;
+      text-transform: uppercase;
+      margin: 0;
     }
 
     a { color: inherit; text-decoration: none; }
-    img { max-width: 100%; display: block; }
-    button { font: inherit; }
+    img { 
+      max-width: 100%; 
+      display: block; 
+      image-rendering: pixelated; /* Keeps standard <img> tags sharp too */
+    }
+    button { font: inherit; cursor: pointer; }
+    
     .container { width: var(--container); margin: 0 auto; }
     .accent { color: var(--red); }
-
-    .nav-wrap {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(5,5,5,0.84);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .nav {
-      min-height: 78px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      position: relative;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .eyebrow {
       font-family: "Orbitron", sans-serif;
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-    }
-
-    .brand-mark {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-      background: var(--red);
-      box-shadow: 0 0 18px rgba(255,43,43,0.35);
-      transform: rotate(45deg);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 8px;
-      margin-left: 6px;
-    }
-
-    .nav-links a,
-    .social a {
-      color: rgba(244,244,244,0.76);
-      padding: 10px 12px;
-      border-radius: 999px;
-      transition: 0.18s ease;
-    }
-
-    .nav-links a:hover,
-    .social a:hover {
-      color: var(--text);
-      background: rgba(255,255,255,0.04);
-    }
-
-    .nav-actions {
-      margin-left: auto;
-      display: flex;
-      gap: 10px;
-    }
-
-    .nav-toggle {
-      display: none;
-      margin-left: auto;
-      width: 46px;
-      height: 46px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-      cursor: pointer;
-    }
-
-    .nav-toggle span {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--red);
       display: block;
-      width: 18px;
-      height: 2px;
-      margin: 4px auto;
-      background: white;
-      border-radius: 999px;
+      margin-bottom: 1rem;
     }
 
-    .mobile-panel {
-      display: none;
+    /* Scroll Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
     }
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .delay-1 { transition-delay: 0.1s; }
+    .delay-2 { transition-delay: 0.2s; }
 
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      min-height: 48px;
-      padding: 0 18px;
-      border-radius: 999px;
-      border: 1px solid var(--line-strong);
+      padding: 1rem 2rem;
+      border: 1px solid var(--line);
       background: transparent;
       color: var(--text);
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      border-color: rgba(255,43,43,0.5);
-    }
-
-    .btn-primary {
-      border-color: rgba(255,43,43,0.65);
-      color: var(--text);
-      background: rgba(255,43,43,0.08);
-    }
-
-    .btn-primary:hover {
-      background: var(--red);
-      color: #050505;
-    }
-
-    .btn-ghost:hover {
-      color: var(--red);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .hero {
-      min-height: calc(100vh - 78px);
-      display: flex;
-      align-items: center;
-      padding: 52px 0 36px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
       position: relative;
-      z-index: 2;
+      overflow: hidden;
     }
-
-    .hero::before {
-      content: "";
+    .btn::before {
+      content: '';
       position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px) 0 0 / 64px 64px,
-        linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 64px 64px;
-      opacity: 0.06;
-      mask-image: linear-gradient(to bottom, transparent, black 18%, black 70%, transparent);
+      top: 0; left: -100%; width: 100%; height: 100%;
+      background: var(--red);
+      transition: transform 0.4s cubic-bezier(0.7, 0, 0.3, 1);
       z-index: -1;
     }
+    .btn:hover {
+      border-color: var(--red);
+      color: #000;
+    }
+    .btn:hover::before {
+      transform: translateX(100%);
+    }
 
-    .hero-inner {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 34px;
+    /* Navigation */
+    .nav-wrap {
+      position: fixed;
+      top: 0; width: 100%;
+      z-index: 100;
+      mix-blend-mode: difference;
+      padding: 1.5rem 0;
+    }
+    .nav {
+      display: flex;
+      justify-content: space-between;
       align-items: center;
     }
-
-    .eyebrow {
-      display: inline-block;
-      margin-bottom: 16px;
-      padding: 8px 12px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      color: rgba(244,244,244,0.72);
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      background: rgba(255,255,255,0.02);
-    }
-
-    h1, h2, h3 {
-      margin: 0;
+    .brand {
       font-family: "Orbitron", sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      font-weight: 900;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
     }
-
-    .hero-title {
-      font-size: clamp(54px, 9vw, 116px);
-      line-height: 0.9;
-      margin-bottom: 18px;
-    }
-
-    .hero-title .top {
-      display: block;
-      color: transparent;
-      -webkit-text-stroke: 1px rgba(255,255,255,0.28);
-    }
-
-    .hero-title .bottom {
-      display: block;
-      color: var(--text);
-      text-shadow: 0 0 30px rgba(255,255,255,0.03);
-    }
-
-    .tagline {
-      margin: 0 0 16px;
-      font-size: 20px;
-      font-weight: 800;
-      line-height: 1.35;
-    }
-
-    .hero-copy p {
-      margin: 0;
-      max-width: 60ch;
-      color: var(--muted);
-      line-height: 1.8;
-      font-size: 16px;
-    }
-
-    .hero-actions {
+    .nav-links {
       display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin: 28px 0;
+      gap: 2rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
     }
+    .nav-links a {
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--red); }
 
-    .hero-stats {
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 100px;
+      position: relative;
+    }
+    .hero-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      max-width: 650px;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
     }
-
-    .stat,
-    .card,
-    .support-card,
-    .footer-card {
+    .hero-title {
+      font-size: clamp(4rem, 10vw, 9rem);
+      line-height: 0.85;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 10;
+    }
+    .hero-title span {
+      display: block;
+    }
+    .hero-title .outline {
+      color: transparent;
+      -webkit-text-stroke: 1px var(--text);
+    }
+    .hero-copy {
+      max-width: 45ch;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
+    .hero-visual {
+      position: relative;
+      width: 100%;
+      height: 75vh; /* Reverted back to a tall, poster-style layout */
+      background: url('static/arena.png') center/cover no-repeat;
       border: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
+      image-rendering: pixelated; 
     }
-
-    .stat {
-      border-radius: 18px;
-      padding: 16px;
+    
+    /* Stats Bar - Asymmetrical overlap */
+    .hero-stats {
+      position: absolute;
+      bottom: -2rem; /* Shifted down so it covers less of the image */
+      left: -2rem;   /* Shifted left to hang off the edge stylishly */
+      background: #000;
+      border: 1px solid var(--line);
+      padding: 2rem;
+      display: flex;
+      gap: 3rem;
+      z-index: 20;
     }
-
     .stat strong {
       display: block;
       font-family: "Orbitron", sans-serif;
-      font-size: 20px;
-      letter-spacing: 0.12em;
-      margin-bottom: 6px;
-    }
-
-    .stat span {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .hero-art {
-      border-radius: 28px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: linear-gradient(180deg, #0c0c0d, #080808);
-      box-shadow: 0 30px 90px rgba(0,0,0,0.55);
-      position: relative;
-    }
-
-    .hero-art::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(420px 180px at 50% 100%, rgba(255,43,43,0.15), transparent 60%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .art-top {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-
-    .chip {
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: rgba(244,244,244,0.7);
-      background: rgba(255,255,255,0.03);
-    }
-
-    .chip.red {
-      color: #ff9a9a;
-      border-color: rgba(255,43,43,0.22);
-      background: rgba(255,43,43,0.06);
-    }
-
-    .screen {
-      position: relative;
-      z-index: 1;
-      aspect-ratio: 16/10;
-      background: #090909;
-      overflow: hidden;
-    }
-
-    .screen img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: grayscale(0.35) contrast(1.08) brightness(0.82);
-      opacity: 0.92;
-    }
-
-    .screen::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(180deg, rgba(0,0,0,0.08), transparent 22%, transparent 75%, rgba(0,0,0,0.42)),
-        radial-gradient(500px 120px at 50% 110%, rgba(255,43,43,0.16), transparent 55%);
-      pointer-events: none;
-    }
-
-    .hud {
-      position: absolute;
-      left: 16px;
-      right: 16px;
-      bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 12px;
-    }
-
-    .hud-box {
-      min-width: 150px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(5,5,5,0.76);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(10px);
-    }
-
-    .hud-label {
-      display: block;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: rgba(244,244,244,0.56);
-      margin-bottom: 6px;
-    }
-
-    .hud-value {
-      font-family: "Orbitron", sans-serif;
-      font-size: 18px;
-      letter-spacing: 0.12em;
-    }
-
-    .bar {
-      margin-top: 8px;
-      width: 120px;
-      height: 7px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.06);
-      overflow: hidden;
-    }
-
-    .bar span {
-      display: block;
-      width: 74%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--red-dark), var(--red));
-      box-shadow: 0 0 16px rgba(255,43,43,0.28);
-      animation: pulse 1.7s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { transform: scaleX(1); filter: brightness(1); }
-      50% { transform: scaleX(1.02); filter: brightness(1.15); }
-    }
-
-    .art-bottom {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      padding: 14px;
-      border-top: 1px solid rgba(255,255,255,0.07);
-    }
-
-    .mini {
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
-      background: rgba(255,255,255,0.025);
-      text-align: center;
-    }
-
-    .mini strong {
-      display: block;
-      font-family: "Orbitron", sans-serif;
-      font-size: 14px;
-      letter-spacing: 0.1em;
-      margin-bottom: 4px;
-    }
-
-    .mini span {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .section {
-      padding: 92px 0;
-      position: relative;
-      z-index: 2;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      align-items: end;
-      margin-bottom: 28px;
-    }
-
-    .section-kicker {
-      display: block;
-      margin-bottom: 12px;
-      color: rgba(255,255,255,0.54);
-      font-size: 12px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .section-title {
-      font-size: clamp(28px, 5vw, 46px);
+      font-size: 2.5rem;
+      color: var(--red);
       line-height: 1;
     }
-
-    .section-head p {
-      max-width: 58ch;
-      margin: 0;
+    .stat span {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
       color: var(--muted);
-      line-height: 1.75;
     }
 
-    .grid-4,
-    .grid-3,
-    .grid-2,
-    .flow {
-      display: grid;
-      gap: 14px;
-    }
-
-    .grid-4 { grid-template-columns: repeat(4, 1fr); }
-    .grid-3 { grid-template-columns: repeat(3, 1fr); }
-    .grid-2 { grid-template-columns: repeat(2, 1fr); }
-    .flow { grid-template-columns: repeat(4, 1fr); margin-top: 16px; }
-
-    .card {
-      border-radius: var(--radius);
-      padding: 20px;
-      transition: transform 0.18s ease, border-color 0.18s ease;
-    }
-
-    .card:hover,
-    .stat:hover,
-    .support-card:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255,43,43,0.18);
-    }
-
-    .icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.03);
-      display: grid;
-      place-items: center;
-      font-family: "Orbitron", sans-serif;
-      color: var(--red);
-      margin-bottom: 14px;
-    }
-
-    .card p {
-      margin: 10px 0 0;
-      color: var(--muted);
-      line-height: 1.72;
-    }
-
-    .flow-node {
-      border-radius: 18px;
-      padding: 16px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.02);
+    /* Core Mechanic - Staggered Layout */
+    .section {
+      padding: 8rem 0;
       position: relative;
     }
-
-    .flow-node:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      right: -18px;
-      width: 24px;
-      height: 2px;
-      background: linear-gradient(90deg, rgba(255,43,43,0.7), rgba(255,43,43,0));
+    .section-title {
+      font-size: clamp(2.5rem, 5vw, 5rem);
+      line-height: 1;
+      margin-bottom: 4rem;
+      max-width: 15ch;
     }
-
-    .flow-node strong {
-      display: block;
-      font-family: "Orbitron", sans-serif;
-      font-size: 13px;
-      letter-spacing: 0.14em;
-      margin-bottom: 6px;
-    }
-
-    .boss-strip {
-      display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .boss-visual {
-      min-height: 280px;
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        radial-gradient(180px 120px at 55% 35%, rgba(255,43,43,0.22), transparent 70%),
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-      position: relative;
-      overflow: hidden;
-    }
-
-    .boss-visual::before {
-      content: "";
-      position: absolute;
-      inset: 12% 18% 10% 16%;
-      border-radius: 30px;
-      background:
-        radial-gradient(circle at 50% 28%, rgba(255,255,255,0.1), transparent 16%),
-        radial-gradient(circle at 50% 68%, rgba(255,43,43,0.28), transparent 30%),
-        linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
-      transform: skewX(-8deg);
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.3);
-    }
-
-    .support-card {
-      border-radius: 30px;
-      padding: 28px;
-      text-align: center;
-    }
-
-    .support-card p {
-      max-width: 64ch;
-      margin: 10px auto 20px;
-      color: var(--muted);
-      line-height: 1.75;
-    }
-
-    .footer {
-      padding: 0 0 40px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .footer-card {
-      border-radius: 30px;
-      padding: 24px;
+    
+    .staggered-list {
       display: flex;
-      justify-content: space-between;
-      gap: 24px;
+      flex-direction: column;
+      gap: 4rem;
+    }
+    .stagger-item {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 2rem;
+      max-width: 600px;
+      border-top: 1px solid var(--line);
+      padding-top: 1.5rem;
+    }
+    .stagger-item:nth-child(even) {
+      align-self: flex-end;
+    }
+    .stagger-num {
+      font-family: "Orbitron", sans-serif;
+      font-size: 1.5rem;
+      color: var(--red);
+    }
+    .stagger-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .stagger-content p {
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* Features - Split Sticky Layout */
+    .split-layout {
+      display: flex;
+      gap: 4rem;
       align-items: flex-start;
     }
-
-    .footer-left p,
-    .footer-right p {
-      color: var(--muted);
-      margin: 8px 0 0;
-      line-height: 1.7;
+    .split-left {
+      flex: 1;
+      position: sticky;
+      top: 120px;
     }
-
-    .studio-line {
-      margin-top: 12px;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: rgba(244,244,244,0.62);
-    }
-
-    .social {
+    .split-right {
+      flex: 1;
       display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-bottom: 10px;
+      flex-direction: column;
+      gap: 6rem;
+      padding-top: 50vh;
+      padding-bottom: 20vh;
+    }
+    .feature-block {
+      border-left: 2px solid var(--red);
+      padding-left: 2rem;
+    }
+    .feature-block h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    .feature-block p {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 1.1rem;
     }
 
-    .tiny {
-      font-size: 12px;
-      color: rgba(244,244,244,0.52);
+    /* Enemies - Brutalist Grid */
+    .brutalist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
     }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 300;
-    }
-
-    .modal.open { display: flex; }
-
-    .modal-backdrop {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.78);
-      backdrop-filter: blur(8px);
-    }
-
-    .modal-dialog {
+    .brutal-card {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 3rem 2rem;
       position: relative;
-      width: min(900px, 100%);
-      border-radius: 28px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, #121214, #090909);
-      overflow: hidden;
-      box-shadow: 0 30px 100px rgba(0,0,0,0.65);
+      background: rgba(0, 0, 0, 0.4);
+      transition: background 0.3s;
+    }
+    .brutal-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .brutal-card .icon {
+      font-family: "Orbitron", sans-serif;
+      font-size: 3rem;
+      color: transparent;
+      -webkit-text-stroke: 1px var(--line);
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      transition: color 0.3s;
+    }
+    .brutal-card:hover .icon {
+      color: var(--red);
+      -webkit-text-stroke: 0;
+    }
+    .brutal-card h3 {
+      font-size: 1.2rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+    }
+    .brutal-card p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
     }
 
-    .modal-head {
+    /* World - Full Bleed Asymmetrical */
+    .world-section {
+      position: relative;
+      padding: 10rem 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+    }
+    .world-content {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+      align-items: end;
+    }
+    .world-text p {
+      color: var(--text);
+      font-size: 1.2rem;
+      line-height: 1.6;
+      border-left: 1px solid var(--red);
+      padding-left: 2rem;
+      margin-top: 2rem;
+    }
+
+    /* Modes - Massive Typography List */
+    .modes-list {
+      display: flex;
+      flex-direction: column;
+      border-top: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .mode-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 18px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 3rem;
+      border-bottom: 1px solid var(--line);
     }
-
-    .modal-title {
+    .mode-name {
       font-family: "Orbitron", sans-serif;
-      font-size: 16px;
-      letter-spacing: 0.1em;
+      font-size: clamp(2rem, 4vw, 4rem);
+      color: var(--text);
+    }
+    .mode-desc {
+      max-width: 300px;
+      text-align: right;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    .footer {
+      padding: 6rem 0 3rem;
+      border-top: 1px solid var(--line);
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .footer-grid {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-links a {
+      font-size: 0.85rem;
       text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+    }
+    .footer-links a:hover { color: var(--red); }
+    .copyright {
+      color: var(--muted);
+      font-size: 0.75rem;
+      margin-top: 2rem;
     }
 
-    .modal-close {
-      width: 42px;
-      height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.03);
-      color: white;
-      font-size: 22px;
-      cursor: pointer;
-    }
-
-    .video-shell {
-      padding: 20px;
-    }
-
-    .video-placeholder {
-      aspect-ratio: 16/9;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background:
-        radial-gradient(320px 120px at 50% 100%, rgba(255,43,43,0.16), transparent 55%),
-        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .video-play {
-      width: 76px;
-      height: 76px;
-      border-radius: 22px;
-      background: rgba(255,43,43,0.08);
-      border: 1px solid rgba(255,43,43,0.35);
-      display: grid;
-      place-items: center;
-      font-size: 30px;
-      margin: 0 auto 14px;
-      box-shadow: 0 18px 40px rgba(255,43,43,0.14);
-    }
-
-    @media (max-width: 1024px) {
-      .hero-inner,
-      .boss-strip,
-      .footer-card {
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hero-grid, .split-layout, .world-content {
         grid-template-columns: 1fr;
-        display: grid;
-      }
-      .grid-4 { grid-template-columns: repeat(2, 1fr); }
-      .grid-3 { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 760px) {
-      .nav-links,
-      .nav-actions { display: none; }
-      .nav-toggle { display: block; }
-
-      .mobile-panel {
-        position: absolute;
-        top: calc(100% + 10px);
-        left: 0;
-        right: 0;
-        padding: 14px;
-        border-radius: 22px;
-        border: 1px solid rgba(255,255,255,0.08);
-        background: rgba(9,9,10,0.96);
-        backdrop-filter: blur(14px);
-        box-shadow: var(--shadow);
-      }
-
-      body.menu-open .mobile-panel { display: block; }
-
-      .mobile-panel .nav-links,
-      .mobile-panel .nav-actions {
         display: flex;
         flex-direction: column;
-        margin: 0;
       }
-
-      .mobile-panel .nav-actions { margin-top: 10px; }
-
-      .hero {
-        min-height: auto;
-        padding-top: 28px;
+      .split-left {
+        position: relative;
+        top: 0;
       }
-
-      .hero-title {
-        font-size: clamp(52px, 18vw, 86px);
+      .split-right {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
       }
-
-      .hero-stats,
-      .grid-4,
-      .grid-3,
-      .grid-2,
-      .flow,
-      .art-bottom {
-        grid-template-columns: 1fr;
+      .hero-visual { width: 100%; order: -1; }
+      .hero-stats {
+        position: relative;
+        bottom: 0; left: 0;
+        margin-top: 2rem;
+        flex-direction: column;
+        gap: 1.5rem;
       }
-
-      .section-head {
-        display: block;
+      .stagger-item, .stagger-item:nth-child(even) {
+        align-self: flex-start;
       }
-
-      .flow-node:not(:last-child)::after {
-        display: none;
-      }
-
-      .social {
-        justify-content: flex-start;
-      }
+      .nav-links { display: none; }
+      .mode-desc { text-align: left; margin-top: 1rem; }
+      .mode-item { flex-direction: column; align-items: flex-start; padding: 2rem 1rem; }
     }
   </style>
 </head>
 <body>
+
   <header class="nav-wrap">
     <div class="container nav">
-      <a class="brand" href="#top" aria-label="ONE BULLET home">
-        <span class="brand-mark"></span>
-        <span>ONE BULLET</span>
-      </a>
-
+      <a class="brand" href="#top">ONE BULLET</a>
       <nav class="nav-links">
-        <a href="#mechanic">Mechanic</a>
-        <a href="#features">Features</a>
-        <a href="#enemies">Enemies</a>
-        <a href="#world">World</a>
-        <a href="#modes">Modes</a>
+        <a href="#mechanic">MECHANIC</a>
+        <a href="#features">FEATURES</a>
+        <a href="#enemies">ENEMIES</a>
+        <a href="#world">WORLD</a>
       </nav>
-
-      <div class="nav-actions">
-        <a class="btn btn-primary" href="#support">Support</a>
-        <button class="btn btn-primary watch-btn" type="button">Watch Trailer</button>
-      </div>
-
-      <button class="nav-toggle" aria-label="Open menu" aria-expanded="false" type="button">
-        <span></span><span></span><span></span>
-      </button>
-
-      <div class="mobile-panel">
-        <nav class="nav-links">
-          <a href="#mechanic">Mechanic</a>
-          <a href="#features">Features</a>
-          <a href="#enemies">Enemies</a>
-          <a href="#world">World</a>
-          <a href="#modes">Modes</a>
-        </nav>
-        <div class="nav-actions">
-          <a class="btn btn-ghost" href="#support">Support</a>
-          <button class="btn btn-primary watch-btn" type="button">Watch Trailer</button>
-        </div>
-      </div>
+      <a class="btn" href="#support">WISHLIST</a>
     </div>
   </header>
 
   <main id="top">
+    <!-- HERO -->
     <section class="hero">
-      <div class="container hero-inner">
-        <div class="hero-copy">
-          <span class="eyebrow">Top-down action roguelike</span>
+      <div class="container hero-grid">
+        <div class="reveal">
           <h1 class="hero-title">
-            <span class="top">ONE</span>
-            <span class="bottom">BULLET</span>
+            <span>ONE</span>
+            <span class="outline">BULLET</span>
           </h1>
-
-          <p class="tagline">You miss. <span class="accent">You die.</span></p>
-
-          <p>
-            Fast movement. Brutal waves. One glowing round that turns you into a predator until you fire it.
-            Then you are exposed in the ruins. Recall it. Retrieve it. Chain kills.
+          <p class="hero-copy">
+            You've got one bullet. Fire it, and you're defenseless until you yank it back. Keep moving, line up your shots, and use the bullet's return path to tear through crowds.
           </p>
-
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#wishlist">Wishlist</a>
-            <button class="btn btn-primary watch-btn" type="button">Watch Trailer</button>
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn" type="button">WATCH TRAILER</button>
           </div>
-
+        </div>
+        <div class="hero-visual reveal delay-1">
           <div class="hero-stats">
             <div class="stat">
               <strong>01</strong>
@@ -884,350 +482,190 @@
               <strong>∞</strong>
               <span>Ways to die</span>
             </div>
-            <div class="stat">
-              <strong>FAST</strong>
-              <span>Speed and skill</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="hero-art">
-          <div class="art-top">
-            <span class="chip red">Recall Shot</span>
-            <span class="chip">Roguelike</span>
-            <span class="chip">Punishing</span>
-          </div>
-
-          <div class="screen">
-            <img src="arena.png" alt="ONE BULLET gameplay arena">
-            <div class="hud">
-              <div class="hud-box">
-                <span class="hud-label">Status</span>
-                <span class="hud-value">VULNERABLE</span>
-                <div class="bar"><span></span></div>
-              </div>
-              <div class="hud-box">
-                <span class="hud-label">Loop</span>
-                <span class="hud-value">FIRE → RECALL</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="art-bottom">
-            <div class="mini"><strong>Dash</strong><span>Break angles</span></div>
-            <div class="mini"><strong>Pierce</strong><span>Cut lines</span></div>
-            <div class="mini"><strong>Recall</strong><span>Return lethal</span></div>
-            <div class="mini"><strong>Chain</strong><span>Keep flow</span></div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- MECHANIC -->
     <section class="section" id="mechanic">
       <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Core mechanic</span>
-            <h2 class="section-title">You only get one</h2>
+        <span class="eyebrow reveal">Core Mechanic</span>
+        <h2 class="section-title reveal delay-1">YOU ONLY GET ONE</h2>
+        
+        <div class="staggered-list">
+          <div class="stagger-item reveal">
+            <div class="stagger-num">01</div>
+            <div class="stagger-content">
+              <h3>FIRE</h3>
+              <p>Shoot to kill. The moment the bullet leaves the barrel, you are left vunerable.</p>
+            </div>
           </div>
-          <p>
-            ONE BULLET is built around a single recallable shot. Once the bullet leaves your chamber,
-            you are completely vulnerable. The only way back to safety is movement, timing, and control.
-          </p>
-        </div>
-
-        <div class="grid-4">
-          <article class="card">
-            <div class="icon">01</div>
-            <h3>Fire</h3>
-            <p>Commit to the angle. The shot leaves the gun and changes the entire fight instantly.</p>
-          </article>
-          <article class="card">
-            <div class="icon">02</div>
-            <h3>Vulnerable</h3>
-            <p>No backup round. No easy recovery. You survive through movement while pressure closes in.</p>
-          </article>
-          <article class="card">
-            <div class="icon">03</div>
-            <h3>Recall</h3>
-            <p>Call the bullet back through the crowd and turn the return path into a weapon.</p>
-          </article>
-          <article class="card">
-            <div class="icon">04</div>
-            <h3>Chain</h3>
-            <p>Great runs come from rhythm. Fire, evade, recall, reposition, then do it again cleanly.</p>
-          </article>
-        </div>
-
-        <div class="flow">
-          <div class="flow-node"><strong>FIRE</strong><span>Shot leaves chamber</span></div>
-          <div class="flow-node"><strong>EXPOSED</strong><span>No bullet, no safety</span></div>
-          <div class="flow-node"><strong>RECALL</strong><span>Recover control through enemies</span></div>
-          <div class="flow-node"><strong>CHAIN</strong><span>Build momentum and survive</span></div>
+          <div class="stagger-item reveal">
+            <div class="stagger-num">02</div>
+            <div class="stagger-content">
+              <h3>VULNERABLE</h3>
+              <p>You don't have backup ammo. When you're empty, you need to recall your bullet.</p>
+            </div>
+          </div>
+          <div class="stagger-item reveal">
+            <div class="stagger-num">03</div>
+            <div class="stagger-content">
+              <h3>RECALL</h3>
+              <p>Pull the bullet back to you. It rips through anything stupid enough to stand in its way.</p>
+            </div>
+          </div>
+          <div class="stagger-item reveal">
+            <div class="stagger-num">04</div>
+            <div class="stagger-content">
+              <h3>CHAIN</h3>
+              <p>Get into the rhythm. Shoot, dodge, recall, reposition. Don't break the loop.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- FEATURES -->
     <section class="section" id="features">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Gameplay features</span>
-            <h2 class="section-title">Sharp and punishing</h2>
-          </div>
-          <p>
-            Clean movement, ruthless pressure, and one round that turns positioning into the whole game.
-          </p>
+      <div class="container split-layout">
+        <div class="split-left reveal">
+          <span class="eyebrow">Gameplay</span>
+          <h2 class="section-title">FAST &<br>UNFORGIVING</h2>
+          <p style="color: var(--muted); max-width: 30ch;">It’s all about where you stand and when you move. so keep moving.</p>
         </div>
-
-        <div class="grid-3">
-          <article class="card">
-            <div class="icon">⚡</div>
-            <h3>Dash-first combat</h3>
-            <p>Fast movement and tight arenas. You survive by reading pressure and choosing angles quickly.</p>
-          </article>
-          <article class="card">
-            <div class="icon">◎</div>
-            <h3>Recallable piercing bullet</h3>
-            <p>One round, two threats. Outgoing fire and return path both matter.</p>
-          </article>
-          <article class="card">
-            <div class="icon">☢</div>
-            <h3>Brutal enemies and bosses</h3>
-            <p>Mutated squads, shielded threats, and bosses that punish hesitation immediately.</p>
-          </article>
+        <div class="split-right">
+          <div class="feature-block reveal">
+            <h3>DASH-FIRST COMBAT</h3>
+            <p>Dash around and dodge the enemies trying to attack you or shoot at you.</p>
+          </div>
+          <div class="feature-block reveal">
+            <h3>PIERCING RECALL</h3>
+            <p>You have two chances to hit someone once when you pull the trigger, and again when you call it back.</p>
+          </div>
+          <div class="feature-block reveal">
+            <h3>BRUTAL ARENAS</h3>
+            <p>Massive bosses and mutated swarms. That you have to use your enviroment to get away from.</p>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- ENEMIES -->
     <section class="section" id="enemies">
       <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Enemies & bosses</span>
-            <h2 class="section-title">Everything wants your angle</h2>
-          </div>
-          <p>
-            Different enemy roles exist to break your timing, block your lines, and punish the moment after you shoot.
-          </p>
-        </div>
-
-        <div class="grid-2">
-          <article class="card">
+        <span class="eyebrow reveal">The Threat</span>
+        <h2 class="section-title reveal delay-1">THEY WANT YOU DEAD</h2>
+        
+        <div class="brutalist-grid reveal">
+          <div class="brutal-card">
             <div class="icon">C</div>
-            <h3>Chargers</h3>
-            <p>Close distance fast and force movement checks the moment your chamber is empty.</p>
-          </article>
-          <article class="card">
+            <h3>CHARGERS</h3>
+            <p>They rush you, punishing predictable movement.</p>
+          </div>
+          <div class="brutal-card">
             <div class="icon">S</div>
-            <h3>Shooters</h3>
-            <p>Turn safe lanes into death and make simple recalls much harder to line up.</p>
-          </article>
-          <article class="card">
+            <h3>SHOOTERS</h3>
+            <p>They shoot bullets make you have to constantly have to keep moving.</p>
+          </div>
+          <div class="brutal-card">
             <div class="icon">B</div>
-            <h3>Shielded</h3>
-            <p>Block direct shots and demand smarter return angles or cleaner positioning.</p>
-          </article>
-          <article class="card">
+            <h3>SHIELDED</h3>
+            <p>You can't hit them head on. You'll have to get creative with your recall angles.</p>
+          </div>
+          <div class="brutal-card">
             <div class="icon">X</div>
-            <h3>Splitters</h3>
-            <p>Multiply pressure if ignored and flood the arena when timing falls apart.</p>
-          </article>
-        </div>
-
-        <div class="boss-strip">
-          <article class="card">
-            <h3>Bosses should feel grotesque and unfair.</h3>
-            <p>
-              Toxic zones, collapsing space, projectile storms, and brief recall windows.
-              Your only real advantage is perfect spacing and perfect timing.
-            </p>
-          </article>
-          <div class="boss-visual" aria-hidden="true"></div>
+            <h3>SPLITTERS</h3>
+            <p>Kill them and they will duplicate into smaller enemies.</p>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="world">
-      <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">World & story</span>
-            <h2 class="section-title">Chernobyl after the break</h2>
-          </div>
+    <!-- WORLD -->
+    <section class="world-section" id="world">
+      <div class="container world-content">
+        <div class="reveal">
+          <h2 class="section-title" style="margin:0;">A BROKEN WASTELAND</h2>
+        </div>
+        <div class="world-text reveal delay-1">
           <p>
-            Concrete bunkers, flooded tunnels, ruined reactors, and a zone that no longer obeys normal rules.
+            Explore the cracked concrete and flooded ruins of a zone where the rules of physics stopped applying a long time ago. Fight through the rusted remains of a dead industrial complex. Your team is gone.
           </p>
         </div>
-
-        <div class="grid-3">
-          <article class="card">
-            <h3>Post-apocalyptic Chernobyl</h3>
-            <p>Industrial ruins, dead infrastructure, and spaces lit by toxic glow instead of safety.</p>
-          </article>
-          <article class="card">
-            <h3>Twisted physics</h3>
-            <p>Radiation reshapes bodies, behavior, and the shape of danger itself.</p>
-          </article>
-          <article class="card">
-            <h3>Last survivor</h3>
-            <p>Your squad is gone. Your gear is gone. All you have left is one weapon and one round.</p>
-          </article>
-        </div>
       </div>
     </section>
 
+    <!-- MODES -->
     <section class="section" id="modes">
       <div class="container">
-        <div class="section-head">
-          <div>
-            <span class="section-kicker">Modes</span>
-            <h2 class="section-title">Built for replay</h2>
+        <span class="eyebrow reveal">Replayability</span>
+        <div class="modes-list reveal delay-1">
+          <div class="mode-item">
+            <span class="mode-name">STORY RUNS</span>
+            <span class="mode-desc">Fight your way to the center of the zone and figure out what went wrong.</span>
           </div>
-          <p>
-            Run it for story. Grind it for mastery. Prove it daily.
-          </p>
-        </div>
-
-        <div class="grid-2">
-          <article class="card">
-            <h3>Story Runs</h3>
-            <p>Push deeper into the zone, unlock upgrades, and uncover what the experiment woke up.</p>
-          </article>
-          <article class="card">
-            <h3>Endless Survival</h3>
-            <p>Waves escalate until the arena becomes pure pressure and mistake management.</p>
-          </article>
-          <article class="card">
-            <h3>Boss Rush</h3>
-            <p>Back-to-back monstrosities. Learn patterns, exploit recall windows, stay alive.</p>
-          </article>
-          <article class="card">
-            <h3>Daily Seeds</h3>
-            <p>Same upgrades, same enemies, same map. Skill only.</p>
-          </article>
-        </div>
-
-        <div class="support-card" id="wishlist" style="margin-top: 18px;">
-          <h3>Ready to step into the zone?</h3>
-          <p>Wishlist ONE BULLET and follow development as Zero Margin Studio pushes toward launch.</p>
-          <div class="hero-actions" style="justify-content:center; margin: 18px 0 0;">
-            <a class="btn btn-primary" href="#" onclick="return false;">Wishlist</a>
-            <a class="btn btn-primary" href="#" onclick="return false;">Press Kit</a>
+          <div class="mode-item">
+            <span class="mode-name">ENDLESS</span>
+            <span class="mode-desc">The enemies keep spawning until you finally make a mistake.</span>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="support" style="padding-top: 0;">
-      <div class="container">
-        <div class="support-card">
-          <h2>Help get ONE BULLET on Steam</h2>
-          <p>Support development and help bring ONE BULLET to Steam.</p>
-          <a href="https://www.gofundme.com/f/get-one-bullet-on-steam" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Support on GoFundMe</a>
+          <div class="mode-item">
+            <span class="mode-name">BOSS RUSH</span>
+            <span class="mode-desc">Skip the grunts and fight every monstrous boss back-to-back.</span>
+          </div>
+          <div class="mode-item">
+            <span class="mode-name">DAILY SEEDS</span>
+            <span class="mode-desc">Everyone gets the exact same layout for 24 hours. Compete for the top spot.</span>
+          </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
+  <footer class="footer" id="support">
     <div class="container">
-      <div class="footer-card">
-        <div class="footer-left">
-          <a class="brand" href="#top">
-            <span class="brand-mark"></span>
-            <span>ONE BULLET</span>
-          </a>
-          <div class="studio-line">A game by Zero Margin Studio</div>
-          <p>Developer: Theo Black · Artist: Baillie Thompson</p>
-          <p>Contact: <a href="mailto:zero.marginstudio@gmail.com">zero.marginstudio@gmail.com</a></p>
+      <div class="footer-grid">
+        <div>
+          <h2 class="orbitron" style="font-size: 2rem; margin-bottom: 1rem;">ZERO MARGIN STUDIO</h2>
+          <p style="color: var(--muted); max-width: 40ch; margin-bottom: 2rem;">
+            Support development and help bring ONE BULLET to Steam.
+          </p>
+          <a href="https://www.gofundme.com/f/get-one-bullet-on-steam" class="btn" target="_blank" rel="noopener noreferrer">SUPPORT ON GOFUNDME</a>
         </div>
-
-        <div class="footer-right">
-          <div class="social">
-            <a href="https://www.youtube.com/channel/UC9ZkKt5Sx-F1MlrzRlW0HHA" target="_blank" rel="noopener">YouTube</a>
-            <a href="https://discord.gg/a8eWyQMB" target="_blank" rel="noopener">Discord</a>
-            <a href="https://x.com/zero_marginST" target="_blank" rel="noopener">X</a>
-            <a href="#" onclick="return false;">Steam</a>
-          </div>
-          <p class="tiny">© <span id="year"></span> Zero Margin Studio. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="https://www.tiktok.com/@zeromarginstudio?lang=en" target="_blank" rel="noopener noreferrer">TIKTOK</a>
+          <a href="https://www.youtube.com/@zeromarginstudio" target="_blank" rel="noopener noreferrer">YOUTUBE</a>
         </div>
+      </div>
+      <div class="copyright">
+        © <span id="year"></span> ZERO MARGIN STUDIO. ALL RIGHTS RESERVED.
       </div>
     </div>
   </footer>
 
-  <div class="modal" id="trailerModal" aria-hidden="true" role="dialog" aria-label="Trailer modal">
-    <div class="modal-backdrop" data-close="true"></div>
-    <div class="modal-dialog" role="document">
-      <div class="modal-head">
-        <div class="modal-title">ONE BULLET trailer</div>
-        <button class="modal-close" type="button" aria-label="Close trailer" data-close="true">×</button>
-      </div>
-      <div class="video-shell">
-        <div class="video-placeholder">
-          <div>
-            <div class="video-play">▶</div>
-            <div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
-    (() => {
-      const yearEl = document.getElementById("year");
-      if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-      const toggle = document.querySelector(".nav-toggle");
-      if (toggle) {
-        toggle.addEventListener("click", () => {
-          const open = document.body.classList.toggle("menu-open");
-          toggle.setAttribute("aria-expanded", open ? "true" : "false");
-        });
-      }
+    // Intersection Observer for Scroll Animations
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.15
+    };
 
-      const closeMenu = () => {
-        document.body.classList.remove("menu-open");
-        if (toggle) toggle.setAttribute("aria-expanded", "false");
-      };
-
-      document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
-        a.addEventListener("click", () => {
-          if (window.innerWidth <= 760) closeMenu();
-        });
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('active');
+          observer.unobserve(entry.target);
+        }
       });
+    }, observerOptions);
 
-      const modal = document.getElementById("trailerModal");
-      const watchBtns = document.querySelectorAll(".watch-btn");
-
-      function openModal() {
-        if (!modal) return;
-        modal.classList.add("open");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeModal() {
-        if (!modal) return;
-        modal.classList.remove("open");
-        modal.setAttribute("aria-hidden", "true");
-        document.body.style.overflow = "";
-      }
-
-      watchBtns.forEach(btn => btn.addEventListener("click", openModal));
-
-      if (modal) {
-        modal.addEventListener("click", (e) => {
-          const target = e.target;
-          if (target instanceof HTMLElement && target.dataset.close === "true") closeModal();
-        });
-      }
-
-      window.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") closeModal();
-      });
-    })();
+    document.querySelectorAll('.reveal').forEach(el => {
+      observer.observe(el);
+    });
   </script>
 </body>
 </html>
